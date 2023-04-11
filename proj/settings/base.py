@@ -109,8 +109,8 @@ DATABASES = {
 }
 
 DATABASE_ROUTERS = [
-	'dj_ample.apps.app_one.routers.SalesRouter', 
-	'dj_ample.apps.app_two.routers.ProductRouter'
+	'proj.apps.app_one.routers.SalesRouter', 
+	'proj.apps.app_two.routers.ProductRouter'
 	]
 
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
@@ -166,6 +166,13 @@ MEDIA_URL = "media/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
+STATIC_ROOT = BASE_DIR / "staticfiles-cdn"
+
+STATICFILES_DIRS = [
+    BASE_DIR / "staticfiles"
+]
+from ..cdn.conf import * # noqa
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -212,11 +219,54 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'Asia/Kolkata'
 CELERY_BEAT_SCHEDULE = {
 	'sch1': {
-		'task': 'dj_ample.apps.app_one.parser.parser_one',
+		'task': 'proj.apps.app_one.parser.parser_one',
 		'schedule': crontab(minute='30', hour='*/8'),
 	},
 	'sch2': {
-		'task': 'dj_ample.apps.app_two.parser.parser_one',
+		'task': 'proj.apps.app_two.parser.parser_one',
 		'schedule': crontab(minute='40', hour='*/4'),
 	}
+}
+
+CORS_URLS_REGEX = r'^/(v1|v2|v3|v4).*$'
+
+REST_API_URLS = (
+	r'^app_one/(v1|v2|v3|v4)/sales_summary/?$',
+	r'^app_one/(v1|v2|v3|v4)/sales/summer/?$',
+    r'^app_one/(v1|v2|v3|v4)/sales/fall/?$',
+    r'^app_one/(v1|v2|v3|v4)/sales/winter/?$',
+    r'^app_two/(v1|v2|v3|v4)/product/?$',
+)
+
+REST_FRAMEWORK = {
+	'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
+	'DEFAULT_PERMISSION_CLASSES': (
+		'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+	),
+	'DEFAULT_AUTHENTICATION_CLASSES': (
+		'rest_framework.authentication.TokenAuthentication',
+		'rest_framework.authentication.SessionAuthentication',
+	),
+	'DEFAULT_FILTER_BACKENDS': (
+		'django_filters.rest_framework.DjangoFilterBackend',
+	),
+	'DEFAULT_RENDERER_CLASSES': (
+		'rest_framework.renderers.JSONRenderer',
+		'rest_framework.renderers.BrowsableAPIRenderer',
+	),
+	'DEFAULT_PARSER_CLASSES': (
+		'rest_framework.parsers.JSONParser',
+	),
+	'DEFAULT_THROTTLE_CLASSES': (
+		'rest_framework.throttling.AnonRateThrottle',
+		'proj.throttles.BurstRateThrottle',
+		'proj.throttles.SustainedRateThrottle',
+	),
+	'DEFAULT_THROTTLE_RATES': {
+		'anon': '10/sec',
+		'burst': '100/sec',
+		'sustained': '1000/min'
+	},
+	'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
+
 }

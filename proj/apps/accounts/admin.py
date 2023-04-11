@@ -5,7 +5,7 @@ from import_export.formats import base_formats
 from rangefilter.filters import DateTimeRangeFilter
 
 # Register your models here.
-from .models import UserProfile, UserNotificationSettings
+from .models import UserProfile
 
 
 # Register your models here.
@@ -45,4 +45,3 @@ class UserNotificationSettingsAdmin(ExportActionModelAdmin):
 
 # Register your models here.
 admin.site.register(UserProfile, UserProfileAdmin)
-admin.site.register(UserNotificationSettings, UserNotificationSettingsAdmin)

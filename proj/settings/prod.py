@@ -56,23 +56,24 @@ DATABASES = {
 	},
 	'sales': {
 		'ENGINE'	: 'django.db.backends.postgresql',
-		'NAME'		: os.environ.get('sales_NAME', 'postgres'),
-		'USER'		: os.environ.get('sales_USER', 'postgres'),
-		'PASSWORD'	: os.environ.get('sales_PASSWORD', ''),
+		'NAME'		: os.environ.get('SALES_NAME', 'postgres'),
+		'USER'		: os.environ.get('SALES_USER', 'postgres'),
+		'PASSWORD'	: os.environ.get('SALES_PASSWORD', ''),
 		'HOST'		: os.environ.get('DB_HOST', ''),
 		'PORT'		: os.environ.get('DB_PORT', ''),
 	},
 	'product': {
 		'ENGINE'	: 'django.db.backends.postgresql',
-		'NAME'		: os.environ.get('product_NAME', 'postgres'),
-		'USER'		: os.environ.get('product_USER', 'postgres'),
-		'PASSWORD'	: os.environ.get('product_PASSWORD', ''),
+		'NAME'		: os.environ.get('PRODUCT_NAME', 'postgres'),
+		'USER'		: os.environ.get('PRODUCT_USER', 'postgres'),
+		'PASSWORD'	: os.environ.get('PRODUCT_PASSWORD', ''),
 		'HOST'		: os.environ.get('DB_HOST', ''),
 		'PORT'		: os.environ.get('DB_PORT', ''),
 	},
 }
 
-
+GOOGLE_CREDENTIALS = json.loads(os.getenv('GOOGLE_CREDENTIALS'))
+GOOGLE_AUTHORIZED_USER = json.loads(os.getenv('GOOGLE_AUTHORIZED_USER'))
 GOOGLE_CLOUD_CREDENTIALS = json.loads(os.getenv('GOOGLE_CLOUD_CREDENTIALS'))
 
 SAP_USER 		= os.getenv("SAP_USER")

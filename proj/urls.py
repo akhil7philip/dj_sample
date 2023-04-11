@@ -22,8 +22,6 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import path, include, re_path
 from rest_framework_swagger.views import get_swagger_view
 
-from . import views
-
 urlpatterns = [
     path("admin/", admin.site.urls),
 ]
@@ -31,7 +29,6 @@ urlpatterns = [
 
 schema_view = get_swagger_view(title="Proj Swagger API Documentation")
 urlpatterns = [
-                re_path(r'^$', views.login_redirect, name='login_redirect'),
                 re_path(r'^admin/', admin.site.urls),
                 re_path(r'^app_one/', include(('proj.apps.app_one.urls', 'app_one'), namespace='app_one')),
                 re_path(r'^app_one/', include(('proj.apps.app_one.urls', 'app_one'), namespace='app_one')),

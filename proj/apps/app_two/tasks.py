@@ -19,8 +19,7 @@ from django.conf import settings
 from django.db.models import Count
 from django.forms.models import model_to_dict
 from gspread.exceptions import GSpreadException
-from proj.celery import single_instance_task
-from .models import SalesOneModel, SalesTwoModel
+from .models import ProductOneModel, ProductTwoModel
 
 ourtimezone = pytz.timezone(settings.TIME_ZONE)
 utctimezone = pytz.timezone("UTC")
@@ -29,12 +28,12 @@ gc, authorized_user = gspread.oauth_from_dict(settings.GOOGLE_CREDENTIALS, setti
 
 
 '''
-gsheet_name:    Sales Summary
+gsheet_name:    Product List
 url:            ...
 sheet_name:     ...
 '''
 @shared_task
-def fetch_sales_summary_records():
+def fetch_product_list():
     
     logger.info("Starting to fetch records sales summary gsheet")
     start_time                  = time.perf_counter()
@@ -42,7 +41,7 @@ def fetch_sales_summary_records():
     try:
         df = open_gsheet_v2(
             sheet_id='...',
-            sheet_name='Form Responses 1!A:AS')
+            sheet_name='Form Responses 2!A:AS')
         logger.info("Parsing sheet now")
         
         values = parse_func(
@@ -57,28 +56,18 @@ def fetch_sales_summary_records():
         logger.info("successfully parsed sheet")
         
         # save records
-        result = save_func_v3(SalesOneModel, values, start_time)
+        result = save_func_v3(ProductOneModel, values, start_time)
         logger.info(result)
 
         # update dashboard and send email notification
         if get_current_env() == 'PROD':
-            update_gsheet_v3(SalesOneModel._meta.db_table,'SUCCESS',result)
+            update_gsheet_v3(ProductOneModel._meta.db_table,'SUCCESS',result)
 
     except Exception as e:
         logger.error(e)
         # update dashboard and send email notification
         if get_current_env() == 'PROD':
-            update_gsheet_v3(SalesOneModel._meta.db_table,'FAILED',e)
+            update_gsheet_v3(ProductOneModel._meta.db_table,'FAILED',e)
         return False
     
     return result
-
-def fetch_summer_sales_records():
-    pass
-
-def fetch_fall_sales_records():
-    pass
-
-def fetch_winter_sales_records():
-    pass
-

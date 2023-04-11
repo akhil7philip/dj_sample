@@ -31,3 +31,14 @@ class SalesTwoModel (models.Model):
     class Meta:
         verbose_name            = 'Sales Two Model'
         db_table                = 'sales two model'
+
+class SummerSalesModel (models.Model):
+    pass
+
+class WinterSalesModel (models.Model):
+    pass
+
+class FallSalesModel (models.Model):
+    start_time                          = models.DateTimeField(auto_now_add=True)
+    end_time                            = models.DateTimeField(auto_now=True)
+    
